@@ -21,7 +21,7 @@ class Box  {
 
     BodyDef bd = new BodyDef();
     bd.type = BodyType.DYNAMIC;
-    bd.position.set(box2d.coordPixelsToWorld(mouseX,mouseY));
+    bd.position.set(box2d.coordPixelsToWorld(x,y));
     body = box2d.createBody(bd);
  
 
@@ -66,6 +66,15 @@ class Box  {
   void killBody() {
     box2d.destroyBody(body);
   }
+  int getX(){
+    Vec2 pos = box2d.getBodyPixelCoord(body);
+    //println(round(pos.x)) ;
+    return round(pos.x) ;
+  }
+  int getY(){
+    Vec2 pos = box2d.getBodyPixelCoord(body);
+    return round(pos.y) ;
+  }
 }
 
 
@@ -77,7 +86,9 @@ float radius;
 float speed = 5;
 float x;
 float y;
- 
+int circle_size = 60 ;
+float spawnX = 200 ;
+float  spawnY = 100 ;
 void setup() {
   size(400,600);
   boxes = new ArrayList<Box>();
@@ -89,31 +100,43 @@ void setup() {
 }
  
 void draw(){
+  
   background(255);
   box2d.step();
+  fill(154, 205, 155);
+  rect(150,450,600,600) ;
   
-  circle = circle + speed;
+  spawnX = spawnX + speed;
   
-  if (circle > width){
+  if (spawnX > width){
     speed = -5;
   }
-  if (circle < 0){
+  if (spawnX < 0){
     speed = 5;
   }
   stroke(0);
-  fill(175);
-  ellipse(circle,550,60,60);
-  if(dist(mouseX,mouseY,circle,550) < radius){
-    //Box.killBody();
+  fill(240, 128, 128);
+  if(mouseY > 200){
+  ellipse(mouseX,mouseY,circle_size,circle_size);
+  }else{
+  ellipse(mouseX,200,circle_size,circle_size);
   }
-  if(mousePressed){
-    Box p = new Box(mouseX ,mouseY);
-    boxes.add(p);
-}
-
+  Box p = new Box(spawnX ,spawnY);
+  boxes.add(p);
   for(Box b: boxes){
     b.display();
-    
+    if(mousePressed){
+    if(b.getX()==mouseX){
+      circle_size +=1 ;
+      //print("1") ;
+    }
+    }
+    //print(mouseX+" ") ;
+    //b.getX() ;
+    //print("2") ;
+  }
+  if(circle_size > 400){
+    circle_size = 60 ;
   }
   //box2d.killBody();
 }
